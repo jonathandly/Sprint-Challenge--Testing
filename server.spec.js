@@ -26,6 +26,11 @@ describe('server.js', () => {
             const res = await request(server).get('/');
             expect(res.type).toBe('application/json');
         });
+
+        it('should return api: alive', async () => {
+            const res = await request(server).get('/');
+            expect(res.body).toEqual({ api: 'alive' });
+        });
     });
 
     describe('GET /games', () => {
@@ -37,6 +42,11 @@ describe('server.js', () => {
             const res = await request(server).get('/games');
             expect(res.status).toBe(200);
             expect(res.body).toEqual([]);
+        });
+
+        it('should return JSON', async () => {
+            const res = await request(server).get('/games');
+            expect(res.type).toBe('application/json');
         });
 
         it('should return all games in db', async () => {
@@ -55,6 +65,20 @@ describe('server.js', () => {
     });
 
     describe('POST /games', () => {
+        afterEach(async () => {
+            await db('games').truncate();
+        });
 
+        it('should return 201 when adding a game', async () => {
+            const game = [
+                { id: 1, title: 'Super Mario Bros', genre: 'Platformer', releaseYear: 1985 },
+            ];
+
+            await db('games').insert(game);
+
+            const res = await request(server).post('/games');
+            expect(res.status).toBe(201);
+            expect(res.body).toEqual(game);
+        });
     });
 });

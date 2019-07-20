@@ -1,12 +1,12 @@
 const db = require('./dbConfig');
 
 module.exports = {
-    add,
+    insert,
     findAll,
     findById,
 };
 
-async function add(game) {
+async function insert(game) {
     const [id] = await db('games').insert(game);
     return findById(id);
 }
