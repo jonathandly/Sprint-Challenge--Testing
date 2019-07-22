@@ -27,7 +27,7 @@ describe('server.js', () => {
             expect(res.type).toBe('application/json');
         });
 
-        it('should return api: alive', async () => {
+        xit('should return api: alive', async () => {
             const res = await request(server).get('/');
             expect(res.body).toEqual({ api: 'alive' });
         });
@@ -70,15 +70,17 @@ describe('server.js', () => {
         });
 
         it('should return 201 when adding a game', async () => {
-            const game = [
-                { id: 1, title: 'Super Mario Bros', genre: 'Platformer', releaseYear: 1985 },
-            ];
+            const game = { title: 'Super Mario Bros', genre: 'Platformer', releaseYear: 1985 };
 
-            await db('games').insert(game);
-
-            const res = await request(server).post('/games');
+            const res = await request(server).post('/games').send(game);
             expect(res.status).toBe(201);
             expect(res.body).toEqual(game);
+        });
+
+        it('should return 422 if field is missing', async () => {
+            const game = { title: 'Super Mario Maker', genre: 'Platformer' };
+            const res = await request(server).post('/games').send(game);
+            expect(res.status).toBe(422);
         });
     });
 });
